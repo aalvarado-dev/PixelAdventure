@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerMov : MonoBehaviour
 {
     Rigidbody2D myRB;
+    private Animator animator; //Para campturar el componente Animator del Jugador
 
     public float maxSpeed;
     SpriteRenderer myrenderer;
@@ -16,6 +17,9 @@ public class PlayerMov : MonoBehaviour
     {
         myRB = GetComponent<Rigidbody2D>();
         myrenderer = GetComponent<SpriteRenderer>();
+
+        //Capturo y asocio el componente Animator del Jugador
+        animator = GetComponent<Animator>();
     }
     private void FixedUpdate()
     {
@@ -26,6 +30,7 @@ public class PlayerMov : MonoBehaviour
             myRB.AddForce(Vector2.up * potenciaSalto);
             //Digo que esta saltando para que no pueda volver a saltar   
             isJumping = true;
+            animator.SetBool("isJump", true);
         }
     }
 
@@ -42,6 +47,7 @@ public class PlayerMov : MonoBehaviour
             Flip();
         }
         myRB.velocity = new Vector2(move * maxSpeed, myRB.velocity.y);
+        animator.SetFloat("MoveSpeed", Mathf.Abs(move));
     }
     void Flip()
     {
@@ -56,6 +62,7 @@ public class PlayerMov : MonoBehaviour
             isJumping = false;
             //Le quito la fuerza de salto remanente que tuviera
             myRB.velocity = new Vector2(myRB.velocity.x, 0);
+            animator.SetBool("isJump", false);
         }
     }
 }
