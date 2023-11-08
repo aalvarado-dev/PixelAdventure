@@ -1,11 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerMov : MonoBehaviour
 {
     Rigidbody2D myRB;
     private Animator animator; //Para campturar el componente Animator del Jugador
+    public TextMeshProUGUI puntos; //variable que mustra los puntos por pantalla
+    int points = 0; //vriable que controla los puntos de la partida
+    public AudioSource coin;
 
     public float maxSpeed;
     SpriteRenderer myrenderer;
@@ -63,6 +67,19 @@ public class PlayerMov : MonoBehaviour
             //Le quito la fuerza de salto remanente que tuviera
             myRB.velocity = new Vector2(myRB.velocity.x, 0);
             animator.SetBool("isJump", false);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        points++;
+
+        if(collision.tag == "Points")
+        {
+            coin.Play();
+            puntos.text = points.ToString();
+            collision.gameObject.SetActive(false);
+
         }
     }
 }
