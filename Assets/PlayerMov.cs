@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMov : MonoBehaviour
 {
@@ -58,9 +59,9 @@ public class PlayerMov : MonoBehaviour
         facingRight = !facingRight;
         myrenderer.flipX = !myrenderer.flipX;
     }
-    private void OnCollisionEnter2D(Collision2D other)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (other.gameObject.CompareTag("Ground"))
+        if (collision.gameObject.CompareTag("Ground"))
         {
             //Digo que no esta saltando para que pueda volver a saltar
             isJumping = false;
@@ -68,6 +69,18 @@ public class PlayerMov : MonoBehaviour
             myRB.velocity = new Vector2(myRB.velocity.x, 0);
             animator.SetBool("isJump", false);
         }
+
+        if (collision.gameObject.CompareTag("Enemigo"))
+        {
+            SceneManager.LoadScene(0);
+        }
+
+        if (collision.gameObject.CompareTag("win"))
+        {
+            SceneManager.LoadScene(0);
+        }
+
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -81,5 +94,9 @@ public class PlayerMov : MonoBehaviour
             collision.gameObject.SetActive(false);
 
         }
+
+
     }
+
+
 }
