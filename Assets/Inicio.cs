@@ -5,8 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class Inicio : MonoBehaviour
 {
-    public void Jugar()
+    public void Jugar()//funcion para el boton para empezar a jugar
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);//cargo la escena de juego
     }
 }

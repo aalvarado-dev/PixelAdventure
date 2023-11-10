@@ -1,97 +1,95 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class PlayerMov : MonoBehaviour
 {
-    Rigidbody2D myRB;
-    private Animator animator; //Para campturar el componente Animator del Jugador
+    Rigidbody2D myRB; //variable que almacena el rigibodi del jugador
+    private Animator animator; //Para capturar los componentes del Animator del Jugador
     public TextMeshProUGUI puntos; //variable que mustra los puntos por pantalla
     int points = 0; //vriable que controla los puntos de la partida
-    public AudioSource coin;
+    public AudioSource coin; //sonido que se reproduce al coger las monedas
 
-    public float maxSpeed;
-    SpriteRenderer myrenderer;
-    bool facingRight = true;
-    bool isJumping = false; //Para comprobar si ya está saltando
+    public float maxSpeed; //velocidad maxima con la que se movera el jugador
+    SpriteRenderer myrenderer; //variable que almacena el render del jugador
+    bool facingRight = true; //variable que controla cuando el jugador mira a la derecha 
+    bool isJumping = false; //variable que controla si el jugador esta saltando
     [Range(1, 500)] public float potenciaSalto; //variable que controla la potencia de salto del jugador
 
     private void Start()
     {
-        myRB = GetComponent<Rigidbody2D>();
-        myrenderer = GetComponent<SpriteRenderer>();
+        myRB = GetComponent<Rigidbody2D>(); //guardo el rgb del jugador
+        myrenderer = GetComponent<SpriteRenderer>(); //guardo el spriterender del jugador
 
-        //Capturo y asocio el componente Animator del Jugador
-        animator = GetComponent<Animator>();
+        
+        animator = GetComponent<Animator>();//guardo el animator del jugador
     }
     private void FixedUpdate()
     {
-        //Si pulso la tecla de salto (espacio) y no estaba saltando
-        if (Input.GetButton("Jump") && !isJumping)
+        
+        if (Input.GetButton("Jump") && !isJumping)//Si pulso la tecla de salto espacio y no esta saltando
         {
-            //Le aplico la fuerza de salto multiplicado por la potencia de salto
-            myRB.AddForce(Vector2.up * potenciaSalto);
-            //Digo que esta saltando para que no pueda volver a saltar   
-            isJumping = true;
-            animator.SetBool("isJump", true);
+            
+            myRB.AddForce(Vector2.up * potenciaSalto);//Le aplico la fuerza de salto multiplicado por la potencia de salto           
+            isJumping = true; //Digo que esta saltando para que no pueda volver a saltar   
+            animator.SetBool("isJump", true);//asigno a la variable creada en el animator a true para que el jugador canvie la animacion a la de salto
         }
     }
 
     private void Update()
     {
-        float move = Input.GetAxis("Horizontal");
+        float move = Input.GetAxis("Horizontal"); //almaceno en la variable las teclas a o d o las flechas derecha izquierda
 
-        if (move > 0 && !facingRight)
+        if (move > 0 && !facingRight) //si el moviemiento entrado es mayor a 0 y no esta mirando a la derecha
         {
-            Flip();
+            Flip(); //llamo a la funcion para que gire al jugador
         }
-        else if (move < 0 && facingRight)
+        else if (move < 0 && facingRight) //si el moviemiento entrado es menor a 0 y no esta mirando a la derecha
         {
-            Flip();
+            Flip();//llamo a la funcion para que gire al jugador
         }
-        myRB.velocity = new Vector2(move * maxSpeed, myRB.velocity.y);
-        animator.SetFloat("MoveSpeed", Mathf.Abs(move));
+        myRB.velocity = new Vector2(move * maxSpeed, myRB.velocity.y); //con la variable creada antes del rgb le damos movimiento al personaje 
+        animator.SetFloat("MoveSpeed", Mathf.Abs(move)); //asigno a la variable animator movespeed para que el jugador pase a correr pasandole el movimiento sin valores negativos 
     }
-    void Flip()
+    void Flip() // funcion que gira al jugador
     {
-        facingRight = !facingRight;
-        myrenderer.flipX = !myrenderer.flipX;
+        facingRight = !facingRight; //si esta mirando a la derecha asignamos que no esta mirando
+        myrenderer.flipX = !myrenderer.flipX;//asignamos el movimiento con flip x para poder girara al jugador hacia la direccion que se mueve
     }
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision) //controlo las colisiones en el juego con el jugador
     {
-        if (collision.gameObject.CompareTag("Ground"))
+        if (collision.gameObject.CompareTag("Ground")) // si colisionamos con el suelo
         {
             //Digo que no esta saltando para que pueda volver a saltar
             isJumping = false;
-            //Le quito la fuerza de salto remanente que tuviera
+            //Le quito la fuerza de salto remanente
             myRB.velocity = new Vector2(myRB.velocity.x, 0);
-            animator.SetBool("isJump", false);
+            animator.SetBool("isJump", false); //asigno a la variable creada isjump en el animator a false para que deje la animacion de salto 
         }
 
-        if (collision.gameObject.CompareTag("Enemigo"))
+        if (collision.gameObject.CompareTag("Enemigo")) // si colisionamos con el enemigo
         {
-            SceneManager.LoadScene(0);
+            SceneManager.LoadScene(3); //cargamos la escena 3 que es la de muerte
         }
 
-        if (collision.gameObject.CompareTag("win"))
+        if (collision.gameObject.CompareTag("win"))// si colisionamos con el suelo
         {
-            SceneManager.LoadScene(0);
+            SceneManager.LoadScene(2);//cargamos la escena 1 que es la de victoria
         }
 
 
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision) //controlo las colisones con los trigger en el juego
     {
-        points++;
+        
 
         if(collision.tag == "Points")
         {
-            coin.Play();
-            puntos.text = points.ToString();
-            collision.gameObject.SetActive(false);
+            points++; //sumo un valor a la variable puntos
+            coin.Play(); //reproduzco el sonido 
+            puntos.text = points.ToString(); //actualizo los puntos en la pantalla del jugador
+            collision.gameObject.SetActive(false); //desactivo las frutas
 
         }
 
